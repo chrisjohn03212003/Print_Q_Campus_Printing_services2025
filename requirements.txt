@@ -1,0 +1,6 @@
+Flask
+flask-cors
+firebase-admin
+google-cloud-firestore
+qrcode
+Werkzeug

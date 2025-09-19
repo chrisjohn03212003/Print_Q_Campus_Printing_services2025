@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrintQ - Smart Campus Printing</title>
+    <link rel="stylesheet" href="/static/css/students.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification hidden">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text"></span>
+        <button onclick="hideNotification()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Auth Section -->
+    <section id="auth-section" class="auth-section">
+      <div class="auth-container">
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form active">
+          <div class="auth-card">
+            <div class="auth-welcome">
+              <img
+                src="/static/image/printq-logo.png"
+                alt="PrintQ Logo"
+                class="auth-logo"
+              />
+              <h1>WELCOME BACK!</h1>
+              <h1>TO PRINTQ</h1>
+              <p>
+                We're happy to have you with us again. If you need anything, we
+                are here to help.
+              </p>
+            </div>
+            <div class="auth-form-content">
+              <h2>Login</h2>
+              <form id="login-form-element">
+                <div class="form-group">
+                  <label for="login-email">Email</label>
+                  <input type="email" id="login-email" required />
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="form-group">
+                  <label for="login-password">Password</label>
+                  <input type="password" id="login-password" required />
+                  <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+                <p class="auth-switch">
+                  Don't have an account?
+                  <a href="#" onclick="showRegister()">Sign up</a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form">
+          <div class="auth-card">
+            <div class="auth-welcome">
+              <img
+                src="/static/image/printq-logo.png"
+                alt="PrintQ Logo"
+                class="auth-logo"
+              />
+              <h1>WELCOME</h1>
+              <h1>TO PRINTQ</h1>
+              <p>
+                We're delighted to have you here. If you need any assistance,
+                feel free to reach out.
+              </p>
+            </div>
+            <div class="auth-form-content">
+              <h2>Register</h2>
+              <form id="register-form-element">
+                <div class="form-group">
+                  <label for="register-username">Username</label>
+                  <input type="text" id="register-username" required />
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="form-group">
+                  <label for="register-email">Email</label>
+                  <input type="email" id="register-email" required />
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="form-group">
+                  <label for="register-student-id">Student ID</label>
+                  <input type="text" id="register-student-id" required />
+                  <i class="fas fa-id-card"></i>
+                </div>
+                <div class="form-group">
+                  <label for="register-password">Password</label>
+                  <input type="password" id="register-password" required />
+                  <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" class="auth-btn">Register</button>
+                <p class="auth-switch">
+                  Already have an account?
+                  <a href="#" onclick="showLogin()">Sign in</a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="dashboard-section hidden">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-print"></i>
+            <h1>PrintQ</h1>
+          </div>
+          <div class="header-actions">
+            <div class="wallet-info">
+              <i class="fas fa-wallet"></i>
+              <span id="wallet-balance">$0.00</span>
+              <button onclick="showAddMoney()" class="add-money-btn">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="eco-points">
+              <i class="fas fa-leaf"></i>
+              <span id="eco-points">0</span>
+              <small>Eco Points</small>
+            </div>
+            <div class="user-menu">
+              <button onclick="toggleUserMenu()" class="user-btn">
+                <i class="fas fa-user"></i>
+                <span id="username-display"></span>
+              </button>
+              <div id="user-dropdown" class="user-dropdown hidden">
+                <a href="#" onclick="showProfile()"
+                  ><i class="fas fa-user"></i> Profile</a
+                >
+                <a href="#" onclick="showHistory()"
+                  ><i class="fas fa-history"></i> History</a
+                >
+                <a href="#" onclick="logout()"
+                  ><i class="fas fa-sign-out-alt"></i> Logout</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="dashboard-main">
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+          <ul>
+            <li>
+              <a
+                href="#"
+                onclick="showSection('upload')"
+                class="nav-link active"
+              >
+                <i class="fas fa-upload"></i> Upload & Print
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('jobs')" class="nav-link">
+                <i class="fas fa-list"></i> My Jobs
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('history')" class="nav-link">
+                <i class="fas fa-history"></i> History
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('wallet')" class="nav-link">
+                <i class="fas fa-wallet"></i> Wallet
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="showSection('profile')" class="nav-link">
+                <i class="fas fa-user"></i> Profile
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content-area">
+          <!-- Upload Section -->
+          <div id="upload-section" class="content-section active">
+            <div class="section-header">
+              <h2><i class="fas fa-upload"></i> Upload & Print</h2>
+              <p>Upload your documents and customize print settings</p>
+            </div>
+
+            <div class="upload-container">
+              <div class="upload-area" id="upload-area">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <h3>Drop files here or click to browse</h3>
+                  <p>Supported formats: PDF, DOCX, PPT (Max: 50MB)</p>
+                  <input
+                    type="file"
+                    id="file-input"
+                    accept=".pdf,.docx,.ppt,.pptx"
+                    multiple
+                  />
+                </div>
+              </div>
+
+              <div id="file-preview" class="file-preview hidden">
+                <div class="file-info">
+                  <div class="file-icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </div>
+                  <div class="file-details">
+                    <h4 id="file-name"></h4>
+                    <p id="file-size"></p>
+                    <p>Estimated pages: <span id="estimated-pages">1</span></p>
+                  </div>
+                  <button onclick="clearFile()" class="clear-file-btn">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="print-options">
+                <h3><i class="fas fa-cogs"></i> Print Settings</h3>
+
+                <div class="options-grid">
+                  <div class="option-group">
+                    <label class="option-label">
+                      <input type="checkbox" id="color-option" />
+                      <span class="checkmark"></span>
+                      Color Printing
+                      <small>+$5.25 per page</small>
+                    </label>
+                  </div>
+
+                  <div class="option-group">
+                    <label class="option-label eco-friendly">
+                      <input type="checkbox" id="duplex-option" />
+                      <span class="checkmark"></span>
+                      Double-sided (Duplex)
+                      <small><i class="fas fa-leaf"></i> Eco-friendly!</small>
+                    </label>
+                  </div>
+
+                  <div class="option-group">
+                    <label for="paper-size">Paper Size</label>
+                    <select id="paper-size">
+                      <option value="A4">A4 (Standard)</option>
+                      <option value="A3">A3 (+50% cost)</option>
+                      <option value="Letter">Letter</option>
+                      <option value="Legal">Legal</option>
+                    </select>
+                  </div>
+
+                  <div class="option-group">
+                    <label for="copies">Copies</label>
+                    <div class="number-input">
+                      <button type="button" onclick="decrementCopies()">
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        id="copies"
+                        value="1"
+                        min="1"
+                        max="100"
+                      />
+                      <button type="button" onclick="incrementCopies()">
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="option-group">
+                    <label class="option-label">
+                      <input type="checkbox" id="binding-option" />
+                      <span class="checkmark"></span>
+                      Spiral Binding
+                      <small>+$4.00</small>
+                    </label>
+                  </div>
+
+                  <div class="option-group">
+                    <label for="scheduled-time">Pickup Time (Optional)</label>
+                    <input type="datetime-local" id="scheduled-time" />
+                  </div>
+                </div>
+
+                <div class="cost-summary">
+                  <div class="cost-breakdown">
+                    <div class="cost-item">
+                      <span>Base cost:</span>
+                      <span id="base-cost">$0.00</span>
+                    </div>
+                    <div class="cost-item">
+                      <span>Options:</span>
+                      <span id="options-cost">$0.00</span>
+                    </div>
+                    <div class="cost-item total">
+                      <span>Total:</span>
+                      <span id="total-cost">$0.00</span>
+                    </div>
+                  </div>
+                  <div class="eco-tip" id="eco-tip" style="display: none">
+                    <i class="fas fa-leaf"></i>
+                    <span
+                      >Great choice! Double-sided printing saves paper and earns
+                      eco points!</span
+                    >
+                  </div>
+                </div>
+
+                <div class="action-buttons">
+                  <button
+                    id="submit-job-btn"
+                    class="primary-btn"
+                    onclick="submitPrintJob()"
+                    disabled
+                  >
+                    <i class="fas fa-print"></i> Submit Print Job
+                  </button>
+                  <button class="secondary-btn" onclick="previewDocument()">
+                    <i class="fas fa-eye"></i> Preview
+                  </button>
+                </div>
+              </div>
+
+              <!-- Cloud Import -->
+              <div class="cloud-import">
+                <h3><i class="fas fa-cloud"></i> Import from Cloud</h3>
+                <div class="cloud-buttons">
+                  <button
+                    class="cloud-btn google-drive"
+                    onclick="importFromDrive()"
+                  >
+                    <i class="fab fa-google-drive"></i> Google Drive
+                  </button>
+                  <button
+                    class="cloud-btn onedrive"
+                    onclick="importFromOneDrive()"
+                  >
+                    <i class="fab fa-microsoft"></i> OneDrive
+                  </button>
+                  <button
+                    class="cloud-btn dropbox"
+                    onclick="importFromDropbox()"
+                  >
+                    <i class="fab fa-dropbox"></i> Dropbox
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jobs Section -->
+          <div id="jobs-section" class="content-section">
+            <div class="section-header">
+              <h2><i class="fas fa-list"></i> My Print Jobs</h2>
+              <p>Track your current print jobs</p>
+              <button onclick="refreshJobs()" class="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+
+            <div class="jobs-container">
+              <div class="jobs-filters">
+                <select id="status-filter" onchange="filterJobs()">
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="printing">Printing</option>
+                  <option value="completed">Completed</option>
+                  <option value="failed">Failed</option>
+                </select>
+                <input
+                  type="search"
+                  id="job-search"
+                  placeholder="Search jobs..."
+                  onkeyup="searchJobs()"
+                />
+              </div>
+
+              <div id="jobs-list" class="jobs-list">
+                <!-- Jobs will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+
+          
+
+          
+
+          <!-- History Section -->
+          <div id="history-section" class="content-section">
+            <div class="section-header">
+              <h2><i class="fas fa-history"></i> Print History</h2>
+              <p>View all your completed print jobs</p>
+            </div>
+
+            <div class="history-container">
+              <div class="history-stats">
+                <div class="stat-card">
+                  <i class="fas fa-print"></i>
+                  <div>
+                    <h3 id="total-jobs">0</h3>
+                    <p>Total Jobs</p>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fas fa-file-alt"></i>
+                  <div>
+                    <h3 id="total-pages">0</h3>
+                    <p>Pages Printed</p>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <i class="fas fa-dollar-sign"></i>
+                  <div>
+                    <h3 id="total-spent">$0.00</h3>
+                    <p>Total Spent</p>
+                  </div>
+                </div>
+                <div class="stat-card eco">
+                  <i class="fas fa-leaf"></i>
+                  <div>
+                    <h3 id="trees-saved">0</h3>
+                    <p>Trees Saved</p>
+                  </div>
+                </div>
+              </div>
+
+              <div id="history-list" class="history-list">
+                <!-- History will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Wallet Section -->
+          <div id="wallet-section" class="content-section">
+            <div class="section-header">
+              <h2><i class="fas fa-wallet"></i> Wallet</h2>
+              <p>Manage your printing credit</p>
+            </div>
+
+            <div class="wallet-container">
+              <div class="wallet-balance-card">
+                <div class="balance-display">
+                  <h3>Current Balance</h3>
+                  <div class="balance-amount">
+                    <span class="currency">$</span>
+                    <span id="wallet-balance-display">0.00</span>
+                  </div>
+                </div>
+                <button onclick="showAddMoney()" class="add-money-btn large">
+                  <i class="fas fa-plus"></i> Add Money
+                </button>
+              </div>
+
+              <div class="quick-amounts">
+                <h3>Quick Add</h3>
+                <div class="amount-buttons">
+                  <button onclick="quickAdd(10)" class="amount-btn">10</button>
+                  <button onclick="quickAdd(40)" class="amount-btn">40</button>
+                  <button onclick="quickAdd(70)" class="amount-btn">70</button>
+                  <button onclick="quickAdd(100)" class="amount-btn">
+                    100
+                  </button>
+                </div>
+              </div>
+
+              <div class="wallet-transactions">
+                <h3>Recent Transactions</h3>
+                <div id="transactions-list" class="transactions-list">
+                  <!-- Transactions will be loaded here -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Section -->
+          <div id="profile-section" class="content-section">
+            <div class="section-header">
+              <h2><i class="fas fa-user"></i> Profile</h2>
+              <p>Manage your account settings</p>
+            </div>
+
+            <div class="profile-container">
+              <div class="profile-card">
+                <div class="profile-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                  <h3 id="profile-username"></h3>
+                  <p id="profile-email"></p>
+                  <p id="profile-student-id"></p>
+                </div>
+              </div>
+
+              <div class="profile-stats">
+                <div class="stat">
+                  <i class="fas fa-leaf"></i>
+                  <div>
+                    <h4 id="profile-eco-points">0</h4>
+                    <span>Eco Points</span>
+                  </div>
+                </div>
+                <div class="stat">
+                  <i class="fas fa-medal"></i>
+                  <div>
+                    <h4 id="profile-level">Beginner</h4>
+                    <span>Level</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-settings">
+                <h3>Settings</h3>
+                <div class="setting-item">
+                  <label class="setting-label">
+                    <input type="checkbox" id="email-notifications" />
+                    <span class="checkmark"></span>
+                    Email Notifications
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <label class="setting-label">
+                    <input type="checkbox" id="eco-tips" />
+                    <span class="checkmark"></span>
+                    Eco-friendly Tips
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <label class="setting-label">
+                    <input type="checkbox" id="auto-duplex" checked />
+                    <span class="checkmark"></span>
+                    Auto-suggest Duplex
+                  </label>
+                </div>
+              </div>
+
+              <div class="profile-actions">
+                <button class="secondary-btn" onclick="changePassword()">
+                  <i class="fas fa-key"></i> Change Password
+                </button>
+                <button class="danger-btn" onclick="deleteAccount()">
+                  <i class="fas fa-trash"></i> Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- Modals -->
+    <!-- Add Money Modal -->
+    <div id="add-money-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-plus"></i> Add Money to Wallet</h3>
+          <button onclick="closeModal('add-money-modal')" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="amount-input">
+            <label for="add-amount">Amount</label>
+            <div class="currency-input">
+              <span class="currency-symbol">$</span>
+              <input
+                type="number"
+                id="add-amount"
+                min="5"
+                max="500"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+          <div class="payment-methods">
+            <h4>Payment Method</h4>
+            <div class="payment-options">
+              <label class="payment-option">
+                <input
+                  type="radio"
+                  name="payment-method"
+                  value="card"
+                  checked
+                />
+                <span class="radio-mark"></span>
+                <i class="fas fa-credit-card"></i>
+                Credit/Debit Card
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment-method" value="paypal" />
+                <span class="radio-mark"></span>
+                <i class="fab fa-paypal"></i>
+                PayPal
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeModal('add-money-modal')" class="secondary-btn">
+            Cancel
+          </button>
+          <button onclick="processPayment()" class="primary-btn">
+            <i class="fas fa-lock"></i> Pay Securely
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Details Modal -->
+    <div id="job-details-modal" class="modal hidden">
+      <div class="modal-content large">
+        <div class="modal-header">
+          <h3><i class="fas fa-info-circle"></i> Job Details</h3>
+          <button onclick="closeModal('job-details-modal')" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="job-details-content">
+            <!-- Job details will be loaded here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            onclick="closeModal('job-details-modal')"
+            class="secondary-btn"
+          >
+            Close
+          </button>
+          <button
+            id="cancel-job-btn"
+            onclick="cancelJob()"
+            class="danger-btn"
+            style="display: none"
+          >
+            Cancel Job
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-qrcode"></i> Pickup QR Code</h3>
+          <button onclick="closeModal('qr-modal')" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <div id="qr-code-display"></div>
+          <p>Show this QR code at the printer for pickup</p>
+          <div class="pickup-info">
+            <p><strong>PIN:</strong> <span id="pickup-pin"></span></p>
+            <p><strong>Job ID:</strong> <span id="pickup-job-id"></span></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeModal('qr-modal')" class="primary-btn">
+            Got it!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/js/students.js"></script>
+  </body>
+</html>
